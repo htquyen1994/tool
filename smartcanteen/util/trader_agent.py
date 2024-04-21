@@ -2,6 +2,7 @@ import multiprocessing
 from multiprocessing.queues import Queue
 from time import sleep
 
+from smartcanteen.util.ccxt_manager import CcxtManager
 from smartcanteen.util.exchange_process import ExchangeProcess
 from smartcanteen.util.exchange_thread import ExchangeThread
 from smartcanteen.util.log_agent import LoggerAgent
@@ -16,10 +17,8 @@ class TraderAgent:
     init_process_trade = False
     logger = None
     running_flag = False
-    __coin_trade = None
-    __primary_exchange = None
-    __secondary_exchange = None
     __simulator = True
+    __ccxt_manager = None
 
     @staticmethod
     def get_instance():
@@ -37,11 +36,9 @@ class TraderAgent:
             super(TraderAgent, self).__init__(ctx=ctx)
             TraderAgent.__instance = self
             self.proc_name = proc_name
-            self.__coin_trade = None
-            self.__primary_exchange = None
-            self.__secondary_exchange = None
             TraderAgent.__worker_process = None
             self.logger = LoggerAgent.get_instance()
+            self.__ccxt_manager = CcxtManager.get_instance()
             self.__start_worker()
 
         except TraderAgent as ex:
@@ -59,14 +56,13 @@ class TraderAgent:
         if TraderAgent.__worker_process is None:
             print("__start_worker init process")
             TraderAgent.__worker_process = multiprocessing.Process(target=self.worker_handler)
-
             TraderAgent.__worker_process.daemon = False
             TraderAgent.__worker_process.start()
 
-    def set_config_trade(self, primary, secondary, coin, simulator):
-        self.__primary_exchange = primary
-        self.__secondary_exchange = secondary
-        self.__coin_trade = coin
+    def set_config_trade(self, primary_exchange, secondary_exchange, coin, simulator):
+        self.__ccxt_manager.set_primary_exchange(primary_exchange)
+        self.__ccxt_manager.set_secondary_exchange(secondary_exchange)
+        self.__ccxt_manager.set_coin_trade(coin)
         self.__simulator = simulator
 
     def start_trade(self):
@@ -83,7 +79,6 @@ class TraderAgent:
 
     def worker_handler(self):
         try:
-
             while True:
                 if not self.running_flag:
                     print("Process sleeping...")
@@ -93,10 +88,11 @@ class TraderAgent:
                     secondary_queue = Queue()
                     while self.running_flag:
                         if not self.init_process_trade:
-                            primary_exchange = ExchangeThread(primary_queue, self.__primary_exchange)
-                            secondary_exchange = ExchangeThread(secondary_queue, self.__secondary_exchange)
-                            primary_exchange.start_job(primary_queue)
-                            secondary_exchange.start_job(secondary_queue)
+
+                            primary_exchange_thread = ExchangeThread(primary_queue, True)
+                            secondary_exchange_thread = ExchangeThread(secondary_queue, False)
+                            primary_exchange_thread.start_job(primary_queue)
+                            secondary_exchange_thread.start_job(secondary_queue)
                             self.init_process_trade = True
 
                         if not primary_queue.empty() and not secondary_queue.empty():
@@ -122,6 +118,9 @@ class TraderAgent:
                             secondary_amount_usdt = secondary_balance['amount_usdt']
                             secondary_amount_coin = secondary_balance['amount_coin']
 
+                            coin_trade = self.__ccxt_manager.get_coin_trade()
+                            ccxt_primary = self.__ccxt_manager.get_ccxt(True)
+                            ccxt_secondary = self.__ccxt_manager.get_ccxt(False)
                             if primary_buy_price > 1.01 * secondary_sell_price:
                                 quantity = min(
                                     min(
@@ -129,24 +128,29 @@ class TraderAgent:
                                         secondary_sell_price * secondary_sell_quantity,
                                         primary_amount_usdt,
                                         secondary_amount_usdt) / primary_buy_price, primary_amount_coin, secondary_amount_coin)
-                                binance_order = binance.create_limit_sell_order(self.__coin_trade, quantity, primary_buy_price)
-                                okx_order = okx.create_limit_buy_order(self.__coin_trade, quantity, secondary_sell_price)
 
+                                primary_order = ccxt_primary.create_limit_sell_order(coin_trade,
+                                                                                     quantity,
+                                                                                     primary_buy_price)
+                                secondary_order = ccxt_secondary.create_limit_buy_order(coin_trade,
+                                                                                        quantity,
+                                                                                        secondary_sell_price)
 
                             elif secondary_buy_price > 1.01 * primary_sell_price:
                                 quantity = min(
-                                    min(
-                                        secondary_buy_price * secondary_buy_quantity,
+                                    min(secondary_buy_price * secondary_buy_quantity,
                                         primary_sell_price * primary_sell_quantity,
                                         secondary_amount_usdt,
                                         primary_amount_usdt) / secondary_buy_price, secondary_amount_coin,
                                     primary_amount_coin)
-                                binance_order = binance.create_limit_buy_order(self.__coin_trade, quantity,
-                                                                                primary_sell_price)
-                                okx_order = okx.create_limit_sell_order(self.__coin_trade, quantity,
-                                                                       secondary_buy_price)
+                                primary_order = ccxt_primary.create_limit_buy_order(coin_trade,
+                                                                                    quantity,
+                                                                                    primary_sell_price)
+                                secondary_order = ccxt_secondary.create_limit_sell_order(coin_trade,
+                                                                                         quantity,
+                                                                                         secondary_buy_price)
 
-except Exception as ex:
+        except Exception as ex:
             print("TraderAgent.worker_handler::".format(ex.__str__()))
 
         

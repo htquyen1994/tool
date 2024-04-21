@@ -2,31 +2,28 @@ from datetime import time
 from threading import Thread
 from time import sleep
 
-import ccxt
-
-from config.config import ExchangesCode
+from smartcanteen.util.ccxt_manager import CcxtManager
 from smartcanteen.util.log_agent import LoggerAgent
 
 
 class ExchangeThread:
     thread = None
     logger = None
-    __api_key = None
-    __secret_key = None
-    __exchange_code = None
-    __coin = None
-    __ccxt_exchange = None
     __is_initialize = False
     __queue = None
+    __is_primary = None
 
-    def __init__(self, queue, api_key, secret_key, exchange_code, coin):
+    __ccxt_manager = None
+    __ccxt_exchange = None
+
+    def __init__(self, queue, is_primary):
         self.is_running = False
-        self.__api_key = api_key
-        self.__secret_key = secret_key
-        self.__exchange_code = exchange_code
         self.__is_initialize = False
         self.__queue = queue
         self.logger = LoggerAgent.get_instance()
+        self.__is_primary = is_primary
+        self.__ccxt_manager = CcxtManager.get_instance()
+        self.__ccxt_exchange = self.__ccxt_manager.get_ccxt(self.__is_primary)
 
     def start_job(self, queue):
         if not self.is_running:
@@ -41,69 +38,32 @@ class ExchangeThread:
         if self.is_running:
             self.is_running = False
             print("Job stopping...")
-            # Đợi cho luồng kết thúc
             self.thread.join()
             print("Job stopped successfully")
         else:
             print("Job is not running")
 
     def job_function(self):
-
-        if not self.__is_initialize:
-            self.initialize(self.__exchange_code)
-            self.__is_initialize = True
-
         while self.is_running:
             try:
-                orderbook = self.__ccxt_exchange.fetch_order_book(self.__coin)
-                self.__queue.put(orderbook)
+                param_object = {}
+                orderbook = self.__ccxt_exchange.fetch_order_book(self.__ccxt_manager.get_coin_trade())
+                param_object['order_book'] = orderbook
+
+                balance = self.__ccxt_exchange.fetch_balance()
+                param_object['balance'] = {}
+                for currency, amount in balance['total'].items():
+                    if (currency == "USDT") and (amount > 0):
+                        param_object['balance']['amount_usdt'] = amount
+                    if (currency == self.__ccxt_manager.get_coin_trade()) and (amount > 0):
+                        param_object['balance']['amount_coin'] = amount
+                self.__queue.put(param_object)
+                print("ExchangeThread.job_function::"
+                      + self.__ccxt_exchange.code
+                      + " ====> ::".format(param_object['balance'].__str__()))
                 sleep(10)
 
             except Exception as ex:
                 sleep(10)
                 print("ExchangeThread.job_function::".format(ex.__str__()))
 
-    def initialize(self, exchange_code):
-        if exchange_code == ExchangesCode.BINANCE:
-            self.__ccxt_exchange = ccxt.binance({
-                'apiKey': self.__api_key,
-                'secret': self.__secret_key,
-            })
-        elif exchange_code == ExchangesCode.OKEX:
-            self.__ccxt_exchange = ccxt.okx({
-                'apiKey': self.__api_key,
-                'secret': self.__secret_key,
-            })
-
-        elif exchange_code == ExchangesCode.GATE:
-            self.__ccxt_exchange = ccxt.gate({
-                'apiKey': self.__api_key,
-                'secret': self.__secret_key,
-            })
-        elif exchange_code == ExchangesCode.HOUBI:
-            self.__ccxt_exchange = ccxt.huobi({
-                'apiKey': self.__api_key,
-                'secret': self.__secret_key,
-            })
-
-        elif exchange_code == ExchangesCode.BYBIT:
-            self.__ccxt_exchange = ccxt.bybit({
-                'apiKey': self.__api_key,
-                'secret': self.__secret_key,
-            })
-        elif exchange_code == ExchangesCode.KUCOIN:
-            self.__ccxt_exchange = ccxt.kucoin({
-                'apiKey': self.__api_key,
-                'secret': self.__secret_key,
-            })
-
-        elif exchange_code == ExchangesCode.BITGET:
-            self.__ccxt_exchange = ccxt.bitget({
-                'apiKey': self.__api_key,
-                'secret': self.__secret_key,
-            })
-        elif exchange_code == ExchangesCode.MEXC:
-            self.__ccxt_exchange = ccxt.mexc({
-                'apiKey': self.__api_key,
-                'secret': self.__secret_key,
-            })
