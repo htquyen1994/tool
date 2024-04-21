@@ -1,0 +1,295 @@
+---
+swagger: "2.0"
+info:
+  description: "Smart Canteen API"
+  version: "0.0.1"
+  title: "Smart Canteen API"
+  contact:
+    email: "api@utc"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+basePath: "/v1"
+tags:
+- name: "Login"
+  description: "Login"
+- name: "Logout"
+  description: "Logout"
+- name: "Trade"
+  description: "Trade"
+schemes:
+- "http"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /login:
+    post:
+      tags:
+      - "Login"
+      summary: "Login post"
+      description: "Do login"
+      operationId: "login_post"
+      parameters:
+      - in: "body"
+        name: "Login"
+        description: "Parameter Login"
+        required: true
+        schema:
+          $ref: "#/definitions/LoginRequest"
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        default:
+          description: "HTTP error code response.\n200=Success\n400=Invalid parameter\n\
+            401=Authentication error\n404=Not found error\n...\nBody is error detail"
+          schema:
+            $ref: "#/definitions/CommonResponse"
+      x-swagger-router-controller: "swagger_server.controllers.login_controller"
+  /logout:
+    post:
+      tags:
+      - "Logout"
+      summary: "Logout post"
+      description: "Do logout"
+      operationId: "logout_post"
+      parameters: []
+      responses:
+        default:
+          description: "HTTP error code response.\n200=Success\n400=Invalid parameter\n\
+            401=Authentication error\n404=Not found error\n...\nBody is error detail"
+          schema:
+            $ref: "#/definitions/CommonResponse"
+      x-swagger-router-controller: "swagger_server.controllers.logout_controller"
+  /init_trade:
+    post:
+      tags:
+      - "Trade"
+      summary: "Init trade post"
+      description: "Do init trade"
+      operationId: "init_post"
+      parameters:
+      - in: "body"
+        name: "InitTrade"
+        description: "Parameter Init trade"
+        required: true
+        schema:
+          $ref: "#/definitions/TradeRequest"
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/TradeResponse"
+        default:
+          description: "HTTP error code response.\n200=Success\n400=Invalid parameter\n\
+            401=Authentication error\n404=Not found error\n...\nBody is error detail"
+          schema:
+            $ref: "#/definitions/CommonResponse"
+      x-swagger-router-controller: "swagger_server.controllers.trade_controller"
+definitions:
+  LoginRequest:
+    type: "object"
+    properties:
+      login_id:
+        type: "integer"
+        format: "int32"
+        description: "Login ID"
+      password:
+        type: "string"
+        description: "Password"
+      device_id:
+        type: "integer"
+        format: "int32"
+        description: "Device ID"
+      application_id:
+        type: "integer"
+        format: "int32"
+        description: "Application android ID"
+    example:
+      login_id: 9999
+      password: "111"
+      device_id: 1
+      application_id: 1
+  TradeRequest:
+    type: "object"
+    properties:
+      coin:
+        type: "string"
+        description: "coin trade"
+      primary_exchange:
+        description: "Exchange primary"
+        $ref: "#/definitions/ExchangeRequest"
+      secondary_exchange:
+        description: "Exchange secondary"
+        $ref: "#/definitions/ExchangeRequest"
+      limit:
+        type: "integer"
+        format: "int32"
+        description: "Litmit"
+      simulated:
+        type: "integer"
+        format: "int32"
+        description: "simulated"
+    example:
+      login_id: 9999
+      password: "111"
+      device_id: 1
+      application_id: 1
+  TradeResponse:
+    type: "object"
+    properties:
+      coin:
+        type: "string"
+        description: "coin trade"
+      primary_exchange:
+        description: "Exchange primary"
+        $ref: "#/definitions/ExchangeInfo"
+      secondary_exchange:
+        description: "Exchange secondary"
+        $ref: "#/definitions/ExchangeInfo"
+      limit:
+        type: "integer"
+        format: "int32"
+        description: "Litmit"
+      simulated:
+        type: "integer"
+        format: "int32"
+        description: "simulated"
+    example:
+      login_id: 9999
+      password: "111"
+      device_id: 1
+      application_id: 1
+  ExchangeRequest:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        description: "Exchange code"
+      primary_key:
+        type: "string"
+        description: "Exchange primary"
+    example:
+      code: "okx"
+      primary_key: "abc"
+  ExchangeInfo:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        description: "Exchange code"
+      coin_list:
+        type: "array"
+        items:
+          $ref: "#/definitions/CoinTradeInfo"
+      amount_usdt:
+        type: "integer"
+        format: "long"
+        description: "Usdt"
+    example:
+      code: "okx"
+      primary_key: "abc"
+  LoginResponse:
+    type: "object"
+    properties:
+      secret_key:
+        type: "string"
+        example: "xxxxxxxxxxxx"
+        description: "Token secret key"
+      user_info:
+        $ref: "#/definitions/UserInfo"
+      access_info:
+        type: "array"
+        items:
+          $ref: "#/definitions/AccessInfo"
+    example:
+      secret_key: "xxxxxxxxxxxx"
+      user_info:
+        login_id: 0
+        user_name: "user_name"
+      access_info:
+      - default: 6
+        name: "name"
+        active: 0
+      - default: 6
+        name: "name"
+        active: 0
+  UserInfo:
+    type: "object"
+    properties:
+      login_id:
+        type: "integer"
+        format: "int32"
+        description: "Login id"
+      user_name:
+        type: "string"
+        description: "User name"
+    example:
+      login_id: 0
+      user_name: "user_name"
+  CoinTradeInfo:
+    type: "object"
+    properties:
+      coin:
+        type: "string"
+        description: "Coin"
+      amount:
+        type: "string"
+        description: "User name"
+      price:
+        type: "integer"
+        description: "long"
+    example:
+      login_id: 0
+      user_name: "user_name"
+  AccessInfo:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "Access menu name"
+      active:
+        type: "integer"
+        format: "int32"
+        description: "0: disable, 1: enable"
+      default:
+        type: "integer"
+        format: "int32"
+        description: "0: no default, 1: default page"
+    example:
+      default: 6
+      name: "name"
+      active: 0
+  CommonResponse:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        example: "OK"
+        description: "Result"
+        enum:
+        - "OK"
+        - "NG"
+      message:
+        type: "string"
+        example: "Success message"
+        description: "Addition message"
+      info:
+        type: "array"
+        items:
+          type: "string"
+    example:
+      code: "OK"
+      message: "Success message"
+      info:
+      - "info"
+      - "info"
+responses:
+  CommonResponse:
+    description: "HTTP error code response.\n200=Success\n400=Invalid parameter\n\
+      401=Authentication error\n404=Not found error\n...\nBody is error detail"
+    schema:
+      $ref: "#/definitions/CommonResponse"

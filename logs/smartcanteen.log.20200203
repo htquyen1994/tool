@@ -1,0 +1,6 @@
+
+[2020-02-06 11:26:29,006] [8000-MainProcess/14964-Thread-4] INFO - SMARTCANTEEN login_post() Login succeeded, id=9999
+[2020-02-03 22:55:09,529] [8000-MainProcess/9308-Thread-18] WARNING - SMARTCANTEEN require_authenticate() AuthenticateError-CommonLibError-Invalid Session Key
+[2020-02-03 22:55:16,462] [8000-MainProcess/14744-Thread-19] INFO - SMARTCANTEEN login_post() Login succeeded, id=9999
+[2020-02-03 22:00:41,120] [1404-MainProcess/13128-Thread-1] WARNING - SMARTCANTEEN require_authenticate() AuthenticateError-CommonLibError-Invalid Session Key
+[2020-02-03 22:00:49,364] [1404-MainProcess/14340-Thread-2] INFO - SMARTCANTEEN login_post() Login succeeded, id=9999
