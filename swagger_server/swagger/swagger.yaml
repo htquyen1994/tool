@@ -1,9 +1,9 @@
 ---
 swagger: "2.0"
 info:
-  description: "Smart Canteen API"
+  description: "Tool API"
   version: "0.0.1"
-  title: "Smart Canteen API"
+  title: "Tool API"
   contact:
     email: "api@utc"
   license:
@@ -15,6 +15,8 @@ tags:
   description: "Login"
 - name: "Logout"
   description: "Logout"
+- name: "Configuration"
+  description: "Configuration trade"
 - name: "Trade"
   description: "Trade"
 schemes:
@@ -64,31 +66,113 @@ paths:
           schema:
             $ref: "#/definitions/CommonResponse"
       x-swagger-router-controller: "swagger_server.controllers.logout_controller"
-  /init_trade:
+  /config:
     post:
       tags:
-      - "Trade"
-      summary: "Init trade post"
-      description: "Do init trade"
-      operationId: "init_post"
+      - "Configuration"
+      summary: "Configuration trade post"
+      description: "Do Configuration trade"
+      operationId: "config"
       parameters:
       - in: "body"
-        name: "InitTrade"
-        description: "Parameter Init trade"
+        name: "Configuration"
+        description: "Parameter Configuration trade"
         required: true
         schema:
-          $ref: "#/definitions/TradeRequest"
+          $ref: "#/definitions/ConfigureTradeRequest"
       responses:
         "200":
           description: "Success"
           schema:
-            $ref: "#/definitions/TradeResponse"
+            $ref: "#/definitions/ConfigureTradeResponse"
         default:
           description: "HTTP error code response.\n200=Success\n400=Invalid parameter\n\
             401=Authentication error\n404=Not found error\n...\nBody is error detail"
           schema:
             $ref: "#/definitions/CommonResponse"
       x-swagger-router-controller: "swagger_server.controllers.trade_controller"
+  /start:
+    post:
+      tags:
+      - "Trade"
+      summary: "Start trade post"
+      description: "Do Start trade"
+      operationId: "start"
+      parameters: []
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CommonResponse"
+        default:
+          description: "HTTP error code response.\n200=Success\n400=Invalid parameter\n\
+            401=Authentication error\n404=Not found error\n...\nBody is error detail"
+          schema:
+            $ref: "#/definitions/CommonResponse"
+      x-swagger-router-controller: "swagger_server.controllers.start_controller"
+  /stop:
+    post:
+      tags:
+      - "Trade"
+      summary: "Stop trade post"
+      description: "Do Stop trade"
+      operationId: "stop"
+      parameters: []
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CommonResponse"
+        default:
+          description: "HTTP error code response.\n200=Success\n400=Invalid parameter\n\
+            401=Authentication error\n404=Not found error\n...\nBody is error detail"
+          schema:
+            $ref: "#/definitions/CommonResponse"
+      x-swagger-router-controller: "swagger_server.controllers.stop_controller"
+  /coins:
+    post:
+      tags:
+      - "Configuration"
+      summary: "Fetch all coins post"
+      description: "Do Fetch all coins post"
+      operationId: "coins"
+      parameters:
+      - in: "body"
+        name: "Coins"
+        description: "Parameter Fetch market trade post"
+        required: true
+        schema:
+          $ref: "#/definitions/CoinsRequest"
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/CoinsResponse"
+        default:
+          description: "HTTP error code response.\n200=Success\n400=Invalid parameter\n\
+            401=Authentication error\n404=Not found error\n...\nBody is error detail"
+          schema:
+            $ref: "#/definitions/CommonResponse"
+      x-swagger-router-controller: "swagger_server.controllers.exchange_controller"
+  /exchanges:
+    post:
+      tags:
+      - "Configuration"
+      summary: "Fetch all exchange post"
+      description: "Do Fetch all exchange post"
+      operationId: "exchanges"
+      parameters: []
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/ExchangesResponse"
+        default:
+          description: "HTTP error code response.\n200=Success\n400=Invalid parameter\n\
+            401=Authentication error\n404=Not found error\n...\nBody is error detail"
+          schema:
+            $ref: "#/definitions/CommonResponse"
+      x-swagger-router-controller: "swagger_server.controllers.exchange_controller"
 definitions:
   LoginRequest:
     type: "object"
@@ -100,20 +184,10 @@ definitions:
       password:
         type: "string"
         description: "Password"
-      device_id:
-        type: "integer"
-        format: "int32"
-        description: "Device ID"
-      application_id:
-        type: "integer"
-        format: "int32"
-        description: "Application android ID"
     example:
       login_id: 9999
       password: "111"
-      device_id: 1
-      application_id: 1
-  TradeRequest:
+  ConfigureTradeRequest:
     type: "object"
     properties:
       coin:
@@ -134,11 +208,61 @@ definitions:
         format: "int32"
         description: "simulated"
     example:
-      login_id: 9999
-      password: "111"
-      device_id: 1
-      application_id: 1
-  TradeResponse:
+      primary_exchange:
+        code: "okx"
+        primary_key: "abc"
+      simulated: 6
+      limit: 0
+      secondary_exchange:
+        code: "okx"
+        primary_key: "abc"
+      coin: "coin"
+  CoinsRequest:
+    type: "object"
+    properties:
+      exchange_code:
+        type: "string"
+        description: "exchange code"
+    example:
+      exchange_code: "exchange_code"
+  CoinsResponse:
+    type: "object"
+    properties:
+      coin_list:
+        type: "array"
+        items:
+          $ref: "#/definitions/CoinInfo"
+    example:
+      coin_list:
+      - symbol: "symbol"
+        base: "base"
+      - symbol: "symbol"
+        base: "base"
+  ExchangesResponse:
+    type: "object"
+    properties:
+      coin_list:
+        type: "array"
+        items:
+          type: "string"
+          description: "exchange code"
+    example:
+      coin_list:
+      - "coin_list"
+      - "coin_list"
+  CoinInfo:
+    type: "object"
+    properties:
+      symbol:
+        type: "string"
+        description: "coin symbol"
+      base:
+        type: "string"
+        description: "coin base"
+    example:
+      symbol: "symbol"
+      base: "base"
+  ConfigureTradeResponse:
     type: "object"
     properties:
       coin:
@@ -166,12 +290,18 @@ definitions:
   ExchangeRequest:
     type: "object"
     properties:
-      code:
+      exchange_code:
         type: "string"
         description: "Exchange code"
       primary_key:
         type: "string"
-        description: "Exchange primary"
+        description: "primary key"
+      secret_key:
+        type: "string"
+        description: "secret key"
+      password:
+        type: "string"
+        description: "password"
     example:
       code: "okx"
       primary_key: "abc"

@@ -15,26 +15,36 @@ class ExchangeRequest(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, code: str=None, primary_key: str=None):  # noqa: E501
+    def __init__(self, exchange_code: str=None, primary_key: str=None, secret_key: str=None, password: str=None):  # noqa: E501
         """ExchangeRequest - a model defined in Swagger
 
-        :param code: The code of this ExchangeRequest.  # noqa: E501
-        :type code: str
+        :param exchange_code: The exchange_code of this ExchangeRequest.  # noqa: E501
+        :type exchange_code: str
         :param primary_key: The primary_key of this ExchangeRequest.  # noqa: E501
         :type primary_key: str
+        :param secret_key: The secret_key of this ExchangeRequest.  # noqa: E501
+        :type secret_key: str
+        :param password: The password of this ExchangeRequest.  # noqa: E501
+        :type password: str
         """
         self.swagger_types = {
-            'code': str,
-            'primary_key': str
+            'exchange_code': str,
+            'primary_key': str,
+            'secret_key': str,
+            'password': str
         }
 
         self.attribute_map = {
-            'code': 'code',
-            'primary_key': 'primary_key'
+            'exchange_code': 'exchange_code',
+            'primary_key': 'primary_key',
+            'secret_key': 'secret_key',
+            'password': 'password'
         }
 
-        self._code = code
+        self._exchange_code = exchange_code
         self._primary_key = primary_key
+        self._secret_key = secret_key
+        self._password = password
 
     @classmethod
     def from_dict(cls, dikt) -> 'ExchangeRequest':
@@ -48,33 +58,33 @@ class ExchangeRequest(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def code(self) -> str:
-        """Gets the code of this ExchangeRequest.
+    def exchange_code(self) -> str:
+        """Gets the exchange_code of this ExchangeRequest.
 
         Exchange code  # noqa: E501
 
-        :return: The code of this ExchangeRequest.
+        :return: The exchange_code of this ExchangeRequest.
         :rtype: str
         """
-        return self._code
+        return self._exchange_code
 
-    @code.setter
-    def code(self, code: str):
-        """Sets the code of this ExchangeRequest.
+    @exchange_code.setter
+    def exchange_code(self, exchange_code: str):
+        """Sets the exchange_code of this ExchangeRequest.
 
         Exchange code  # noqa: E501
 
-        :param code: The code of this ExchangeRequest.
-        :type code: str
+        :param exchange_code: The exchange_code of this ExchangeRequest.
+        :type exchange_code: str
         """
 
-        self._code = code
+        self._exchange_code = exchange_code
 
     @property
     def primary_key(self) -> str:
         """Gets the primary_key of this ExchangeRequest.
 
-        Exchange primary  # noqa: E501
+        primary key  # noqa: E501
 
         :return: The primary_key of this ExchangeRequest.
         :rtype: str
@@ -85,10 +95,56 @@ class ExchangeRequest(Model):
     def primary_key(self, primary_key: str):
         """Sets the primary_key of this ExchangeRequest.
 
-        Exchange primary  # noqa: E501
+        primary key  # noqa: E501
 
         :param primary_key: The primary_key of this ExchangeRequest.
         :type primary_key: str
         """
 
         self._primary_key = primary_key
+
+    @property
+    def secret_key(self) -> str:
+        """Gets the secret_key of this ExchangeRequest.
+
+        secret key  # noqa: E501
+
+        :return: The secret_key of this ExchangeRequest.
+        :rtype: str
+        """
+        return self._secret_key
+
+    @secret_key.setter
+    def secret_key(self, secret_key: str):
+        """Sets the secret_key of this ExchangeRequest.
+
+        secret key  # noqa: E501
+
+        :param secret_key: The secret_key of this ExchangeRequest.
+        :type secret_key: str
+        """
+
+        self._secret_key = secret_key
+
+    @property
+    def password(self) -> str:
+        """Gets the password of this ExchangeRequest.
+
+        password  # noqa: E501
+
+        :return: The password of this ExchangeRequest.
+        :rtype: str
+        """
+        return self._password
+
+    @password.setter
+    def password(self, password: str):
+        """Sets the password of this ExchangeRequest.
+
+        password  # noqa: E501
+
+        :param password: The password of this ExchangeRequest.
+        :type password: str
+        """
+
+        self._password = password

@@ -5,7 +5,7 @@ from config.config import ExchangesCode
 
 def init_cctx_exchange(exchange):
     ccxt_exchange = None
-    exchange_code = exchange.code
+    exchange_code = exchange.exchange_code
     param = {'apiKey': exchange.private_key, 'secret': exchange.secret_key}
     if exchange_code == ExchangesCode.BINANCE:
         ccxt_exchange = ccxt.binance(param)
@@ -26,7 +26,6 @@ def init_cctx_exchange(exchange):
         ccxt_exchange = ccxt.mexc(param)
     return ccxt_exchange
 
-
 class CcxtManager:
     __instance = None
     __primary_exchange = None
@@ -34,6 +33,7 @@ class CcxtManager:
     __ccxt_primary = None
     __ccxt_secondary = None
     __coin_trade = None
+    __exchange_map = {}
 
     def __init__(self):
         pass
@@ -47,10 +47,12 @@ class CcxtManager:
     def set_primary_exchange(self, exchange_info):
         self.__primary_exchange = exchange_info
         self.__ccxt_primary = init_cctx_exchange(exchange_info)
+        self.__exchange_map[exchange_info.exchange_code] = self.__ccxt_primary
 
     def set_secondary_exchange(self, exchange_info):
         self.__secondary_exchange = exchange_info
         self.__ccxt_secondary = init_cctx_exchange(exchange_info)
+        self.__exchange_map[exchange_info.exchange_code] = self.__ccxt_secondary
 
     def get_exchange(self, is_primary):
         if is_primary:
@@ -64,6 +66,9 @@ class CcxtManager:
         if is_primary:
             return self.__ccxt_primary
         return self.__ccxt_secondary
+    def get_exchanges_available(self):
+        return convert_enum_to_array(ExchangesCode)
 
-    def get_coin_trade(self):
-        return self.__coin_trade
+
+def convert_enum_to_array(enum_class):
+    return [{'exchange_code': exchange.value, 'exchange_name': exchange.name} for exchange in enum_class]

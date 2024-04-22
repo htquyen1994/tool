@@ -59,7 +59,7 @@ class ExchangeThread:
                         param_object['balance']['amount_coin'] = amount
                 self.__queue.put(param_object)
                 print("ExchangeThread.job_function::"
-                      + self.__ccxt_exchange.code
+                      + self.__ccxt_exchange.exchange_code
                       + " ====> ::".format(param_object['balance'].__str__()))
                 sleep(10)
 

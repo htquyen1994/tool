@@ -38,7 +38,6 @@ class TimeRequest:
     GET_REQUEST = 60  # seconds
 
 
-
 class TemplateFile:
     PATH = "E:/01_ICMS/SmartCanteen_Server/template/"
     TEMPLATE_STAFF = "template_staff.xlsm"
@@ -54,4 +53,3 @@ class ExchangesCode(Enum):
     KUCOIN = 'kucoin'
     BITGET = 'bitget'
     MEXC = 'mexc'
-

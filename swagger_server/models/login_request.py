@@ -15,36 +15,26 @@ class LoginRequest(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, login_id: int=None, password: str=None, device_id: int=None, application_id: int=None):  # noqa: E501
+    def __init__(self, login_id: int=None, password: str=None):  # noqa: E501
         """LoginRequest - a model defined in Swagger
 
         :param login_id: The login_id of this LoginRequest.  # noqa: E501
         :type login_id: int
         :param password: The password of this LoginRequest.  # noqa: E501
         :type password: str
-        :param device_id: The device_id of this LoginRequest.  # noqa: E501
-        :type device_id: int
-        :param application_id: The application_id of this LoginRequest.  # noqa: E501
-        :type application_id: int
         """
         self.swagger_types = {
             'login_id': int,
-            'password': str,
-            'device_id': int,
-            'application_id': int
+            'password': str
         }
 
         self.attribute_map = {
             'login_id': 'login_id',
-            'password': 'password',
-            'device_id': 'device_id',
-            'application_id': 'application_id'
+            'password': 'password'
         }
 
         self._login_id = login_id
         self._password = password
-        self._device_id = device_id
-        self._application_id = application_id
 
     @classmethod
     def from_dict(cls, dikt) -> 'LoginRequest':
@@ -102,49 +92,3 @@ class LoginRequest(Model):
         """
 
         self._password = password
-
-    @property
-    def device_id(self) -> int:
-        """Gets the device_id of this LoginRequest.
-
-        Device ID  # noqa: E501
-
-        :return: The device_id of this LoginRequest.
-        :rtype: int
-        """
-        return self._device_id
-
-    @device_id.setter
-    def device_id(self, device_id: int):
-        """Sets the device_id of this LoginRequest.
-
-        Device ID  # noqa: E501
-
-        :param device_id: The device_id of this LoginRequest.
-        :type device_id: int
-        """
-
-        self._device_id = device_id
-
-    @property
-    def application_id(self) -> int:
-        """Gets the application_id of this LoginRequest.
-
-        Application android ID  # noqa: E501
-
-        :return: The application_id of this LoginRequest.
-        :rtype: int
-        """
-        return self._application_id
-
-    @application_id.setter
-    def application_id(self, application_id: int):
-        """Sets the application_id of this LoginRequest.
-
-        Application android ID  # noqa: E501
-
-        :param application_id: The application_id of this LoginRequest.
-        :type application_id: int
-        """
-
-        self._application_id = application_id
