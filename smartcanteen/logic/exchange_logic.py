@@ -1,3 +1,4 @@
+from smartcanteen.util.auth import require_authenticate
 from smartcanteen.util.ccxt_manager import CcxtManager
 from smartcanteen.util.common import Util
 from smartcanteen.util.const import ResponseMessage

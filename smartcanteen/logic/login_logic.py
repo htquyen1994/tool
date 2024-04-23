@@ -2,12 +2,13 @@ import uuid
 
 from datetime import datetime, timedelta
 
+from config.message import ErrorMessage
+from smartcanteen.util.log_agent import LoggerAgent
 from swagger_server.models import UserInfo, LoginResponse
 from smartcanteen.util.trader_agent import TraderAgent
 from commonlib.const import Function
 from smartcanteen.util.common import Util
 from smartcanteen.util.const import ResponseMessage, WebError, LoginError, Session, InvalidParamError, DBConst
-from smartcanteen.util.log import Logger
 
 
 class LoginLogic:
@@ -19,7 +20,7 @@ class LoginLogic:
             cls.__ensure_login_request(login)
             # Begin transaction
             session_key = LoginLogic.__do_login(login.login_id, login.password)
-            Logger.info(Function.login_post.name, "Login succeeded, id={}".format(login.login_id))
+            LoggerAgent.info("Login succeeded, id={}".format(login.login_id))
             # Make info to response
             login_res = LoginResponse(
                 secret_key=session_key,
@@ -28,14 +29,12 @@ class LoginLogic:
             return Util.make_json_response(login_res.to_dict(), session_key), ResponseMessage.Success.http_code
         except WebError as ex:
             #  login error
-            Logger.warning(Function.login_post.name, ex.__str__())
+            LoggerAgent.warning(ex.__str__())
             return ex.make_response(str(ex))
 
 
     @classmethod
     def __do_login(cls,  user_id, password):
-     
-        user_info = UserSql.get_user_info(db_agent, user_id)
         if user_id != 'admin' or password != 'admin@135':
             raise LoginError(ErrorMessage.LoginError)
         # create new session key

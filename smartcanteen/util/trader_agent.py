@@ -3,7 +3,6 @@ from multiprocessing.queues import Queue
 from time import sleep
 
 from smartcanteen.util.ccxt_manager import CcxtManager
-from smartcanteen.util.exchange_process import ExchangeProcess
 from smartcanteen.util.exchange_thread import ExchangeThread
 from smartcanteen.util.log_agent import LoggerAgent
 
