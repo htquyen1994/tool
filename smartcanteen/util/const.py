@@ -5,47 +5,6 @@ from config.config import SessionSetting
 from config.message import ErrorMessage
 from swagger_server.models.common_response import CommonResponse
 
-
-class DBRetryConst:
-    """DB retry const"""
-    RETRY_INTERVAL = 1
-    RETRY_COUNT = 2
-
-
-class DBName(Enum):
-    """DB name"""
-    DB_CORE = "DB_CORE"
-
-
-class DBConst:
-    """DB const"""
-    MAX_PARAM_COUNT = 2000
-    INIT_PRIVILEGE = 0
-    DAYS_OF_REGISTERED_MEAL = 1
-    KITCHEN_HISTORY = 1
-    SERVING_CLOSED_STATUS = [0, 1]
-    OUT_OF_SERVICE = 0
-    SHIFT_MEAL_OVERTIME = 1
-    MAX_ID = 100000000
-    BE_USE = 0
-    NOT_USE = 1
-    NOT_CONFIRMED = 0
-    MANUAL_CONFIRMED = 1
-    ERROR_MESSAGE = ""
-    VTM = 1
-    NOT_VTM = 0
-    NO_REG_MEAL_ID = -1
-    DEFAULT_MEAL_ID = 1
-    CALENDAR_OFF = 0
-    CALENDAR_WORKING = 1
-    DELETED = 1
-    ACTIVE = 1
-    DEACTIVE = 0
-    NONE_DEFAULT = 0
-    FACTORY_ADMIN_PRIVILEGE = 9999
-    FLAG_ALL = 1
-
-
 class HTTPMethod(Enum):
     """Http method"""
     GET = "GET"
@@ -89,72 +48,6 @@ class ReportType(Enum):
         self.title = title
 
 
-class StaffReportIndex:
-    """Staff report db index"""
-    ID = 0
-    NAME = 1
-    SERVING = 2
-    COUNT = 3
-
-
-class DeptReportIndex:
-    """Dept report index"""
-    ID = 0
-    NAME = 1
-    SERVING = 2
-    COUNT = 3
-
-
-class ServingReportDbIndex:
-    """Staff report db index"""
-    ID = 0
-    COUNT = 1
-
-
-class StaffReportConst:
-    """Staff report"""
-    PADDING_NUM = 1000000000
-    ID = 1
-    ID_TITLE = "Staff ID"
-    NAME = 2
-    NAME_TITLE = "Staff Name"
-    SERVING = 3
-
-
-class DeptReportConst:
-    """Staff report"""
-    PADDING_NUM = 1000000000
-    ID = 1
-    ID_TITLE = "Dept. ID"
-    NAME = 2
-    NAME_TITLE = "Dept. Name"
-    SERVING = 3
-
-
-class ExportDeptReport:
-    GROUP_NAME = "Group department"
-    GROUP_ID = 99
-    TOTAL_ID = 0,
-    TOTAL_NAME = "TOTAL"
-
-
-class ServingReportConst:
-    """Staff report"""
-    PADDING_NUM = 1000000000
-    ID = 1
-    ID_TITLE = "Serving ID"
-    NAME = 2
-    NAME_TITLE = "Serving Name"
-    TOTAL = 3
-    TOTAL_TITLE = "Total"
-    INDEX = 1
-
-
-class ConfirmedKitchenIndex:
-    SHIFT = 0
-    MEAL = 1
-    DATE = 2
-
 class Session:
     # Session timeout
     TIMEOUT = SessionSetting.SESSION_TIMEOUT
@@ -174,11 +67,6 @@ class DefaultConst:
     FALSE = 0
     OFF_SET_DAY = 0
 
-
-
-class DownloadConst:
-    PATH = "D:/01_ICMS/SmartCanteen_Server/download/"
-    TYPE_STAFF = 1
 
 
 class ResponseMessage(Enum):

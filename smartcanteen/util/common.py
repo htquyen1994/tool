@@ -7,7 +7,7 @@ from datetime import timedelta, time
 from decorator import decorator
 from flask import request, make_response
 
-from commonlib.const import DbAccessError, AuthenticateError, AuthorizationError
+from commonlib.const import AuthenticateError, AuthorizationError
 # from commonlib.db import DbUtil
 from smartcanteen.util.const import (ResponseMessage,
                                      DBRetryConst,
@@ -43,37 +43,14 @@ class Util:
 
     @staticmethod
     def __error_response(exception):
-        """
-        Make error to response
-        :param exception: exception (Exception)
-        :return: Swagger/ConnexionのResponse response format: tuple(data, http_code)
-                data: CommonResponse
-                http_code: http code
-        """
         return ResponseMessage.exception_response(exception)
 
     @staticmethod
     def __auth_error_response(exception):
-        """
-        Make authentication/authorization error to response
-        :param exception: exception (Exception)
-        :return: Swagger/ConnexionのResponse response format: tuple(data, http_code)
-                data: CommonResponse
-                http_code: http code
-        """
         return ResponseMessage.AuthenticateFailed.make_response(message=str(exception))
 
     @staticmethod
     def ensure_int(var_name, var_value):
-        """
-        Validate value is int
-        :type var_name: str
-        :param var_name:　var name
-        :type var_value: str
-        :param var_value:　value in str
-        :rtype: int
-        :return: value of var_value
-        """
         try:
             return int(var_value)
         except Exception:
@@ -91,12 +68,6 @@ class Util:
 
     @staticmethod
     def ensure_factory_id(factory_id):
-        """
-        Check if factory_id in parameter is matched with user factory_id
-        When user factory_id is None, all factory id is allowed
-        :type factory_id: int
-        :param factory_id: factory_id
-        """
         from smartcanteen.util.auth import LoginUtil
         user_factory_id = LoginUtil.get_factory_id()
         if user_factory_id is not None:

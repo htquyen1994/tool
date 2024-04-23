@@ -7,6 +7,7 @@ from swagger_server.models import ConfigureTradeResponse, CommonResponse, Exchan
 
 class ExchangeLogic:
     @classmethod
+    @require_authenticate
     @Util.system_error_handler
     def configure_post(cls, configure):
         try:
@@ -22,6 +23,7 @@ class ExchangeLogic:
             print("ExchangeLogic.configure_post::".format(ex.__str__()))
 
     @classmethod
+    @require_authenticate
     @Util.system_error_handler
     def start_post(cls):
         try:
@@ -32,6 +34,7 @@ class ExchangeLogic:
             print("ExchangeLogic.start_post::".format(ex.__str__()))
 
     @classmethod
+    @require_authenticate
     @Util.system_error_handler
     def stop_post(cls):
         try:
@@ -42,6 +45,7 @@ class ExchangeLogic:
             print("ExchangeLogic.stop_post::".format(ex.__str__()))
 
     @classmethod
+    @require_authenticate
     @Util.system_error_handler
     def exchanges_get(cls):
         try:
